@@ -1,9 +1,9 @@
-import { ImageDefault } from "@/constant/image.constant";
-import { RootNavigationType } from "@/navigation/StackNavigation";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FlatList, Image, Pressable, Text, View } from "react-native";
+import { ImageDefault } from "@/constant/image.constant";
+import { RootNavigationType } from "@/navigation/StackNavigation";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 
 interface Props {
   pokemonList: IPokemonList;
@@ -21,6 +21,7 @@ export default function PokemonList({ pokemonList }: Props) {
 }
 
 export function PokemonItem({ id }: { id: string }) {
+  const { navigate } = useNavigation<NavigationProp<RootNavigationType>>();
   const [pokemon, setPokemon] = useState<IPokemonItem>();
 
   function getItem() {
@@ -29,8 +30,6 @@ export function PokemonItem({ id }: { id: string }) {
       .then((res) => setPokemon(res.data))
       .catch(console.log);
   }
-
-  const { navigate } = useNavigation<NavigationProp<RootNavigationType>>();
 
   useEffect(() => {
     getItem();
@@ -54,11 +53,12 @@ export function PokemonItem({ id }: { id: string }) {
           <View className="absolute z-10 inset-0 w-full h-full justify-center items-center">
             <Image
               source={
-                pokemon?.sprites.front_default
+                pokemon?.sprites.other["official-artwork"].front_default
                   ? {
-                      uri: pokemon.sprites.front_default,
-                      height: "70%",
-                      width: "80%",
+                      uri: pokemon.sprites.other["official-artwork"]
+                        .front_default,
+                      height: "50%",
+                      width: "50%",
                     }
                   : ImageDefault
               }
