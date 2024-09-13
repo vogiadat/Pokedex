@@ -6,37 +6,34 @@ import PokemonList from "@/components/PokemonListCom";
 import { LogoIcon, SearchIcon, SortIcon } from "@/constant/image.constant";
 import { useDebouche } from "@/hooks/useDebouche";
 import { AxiosResponse } from "axios";
-import Svg, { Path } from "react-native-svg";
+import { fetchPokemonList } from "@/stores/actions";
+import { RootState, store } from "@/stores";
+import { useDispatch, useSelector } from "react-redux";
+import { Action } from "@/stores/reducer";
 
 export default function HomeScreen() {
-  const [pokemonList, setPokemonList] = useState<IPokemonList>();
+  const dispatch = useDispatch();
+  let pokemonList = useSelector((state: RootState) => state.pokemonList);
   const [search, setSearch] = useState("");
   const { deboucheValue, loading } = useDebouche({
     value: search,
     delay: 1000,
   });
-
-  const getPokemonList = async () => {
-    const res: AxiosResponse<IPokemonList> = await AxiosApi.get("/pokemon");
-    setPokemonList(res.data);
-    return res.data;
-  };
-
   const handleSearch = (value: string) => {
     setSearch(value);
   };
 
   useEffect(() => {
-    getPokemonList();
+    dispatch({ type: Action.FETCH_LIST });
   }, []);
 
   useEffect(() => {
-    if (pokemonList && deboucheValue) {
+    if (deboucheValue) {
       const oldData = pokemonList!.results;
-      return setPokemonList({
+      pokemonList = {
         ...pokemonList,
         results: oldData.filter((item) => item.name === deboucheValue),
-      });
+      };
     }
   }, [deboucheValue]);
 
